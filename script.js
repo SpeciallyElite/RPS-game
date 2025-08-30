@@ -1,28 +1,4 @@
-
-
-function inputism() {
-    console.log("Kindly pick one of the following options:");
-    console.log("ROCK");
-    console.log("PAPER");
-    console.log("SCISSORS");
-
-    let gotteninput = (prompt("Enter your chosen weapon:"));
-
-    gotteninput = gotteninput.toLowerCase();
-
-    if (gotteninput === "rock") {
-        console.log("You chose Rock");
-    } else if (gotteninput === "paper") {
-        console.log("You chose Paper");
-    } else if (gotteninput === "scissors") {
-        console.log("You chose Scissors");
-    } else {
-        console.log("Invalid input. Please enter the available weapons.");
-    }
-    return gotteninput;
-}
-
-function computerism() {
+function computerism() {            // Gets the computer's choice
 
     let computerinput = (Math.floor(Math.random()*3) + 1);
 
@@ -40,69 +16,104 @@ function computerism() {
     }
 }
 
-function resultism(inputism, computerism) {
+const resultDiv = document.querySelector("#results")
+
+function showResult(message){
+    resultDiv.textContent = message;
+}
+
+function playRound(inputism, computerism) {            // mixes up human and computer's choices and provides with a result
 
     if (inputism === computerism) {
-        console.log ("It's a draw!");
+        showResult("Its Draw!");
     }
     else if (inputism === "rock" && computerism === "paper") {
-        console.log("Human loses! Computer wins!");
+        showResult("Computer wins! Human loses!");
         return "computer";
     }
     else if (inputism === "rock" && computerism === "scissors") {
-        console.log("Human wins! Computer loses!");
+        showResult("Human wins! Computer loses!");
         return "human";
     }
     else if (inputism === "paper" && computerism === "rock") {
-        console.log("Human wins! Computer loses!");
+        showResult("Human wins! Computer loses!");
         return "human";
     }
     else if (inputism === "paper" && computerism === "scissors") {
-        console.log("Human loses! Computer wins!");
+        showResult("Human loses! Computer wins!");
         return "computer";
     }
     else if (inputism === "scissors" && computerism === "rock") {
-        console.log("Human loses! Computer wins!");
+        showResult("Human loses! Computer wins!");
         return "computer";
     }
     else if (inputism === "scissors" && computerism === "paper") {
-        console.log("Human wins! Computer loses!");
+        showResult("Human wins! Computer loses!");
         return "human";
     } else {
-        console.log("Someone messed up. We are internally crying.");
+        showResult("Someone messed up. We are internally crying.");
     }
     return;
 }
+let humanScore = 0
+let computerScore = 0
+let roundsPlayed = 0
 
-function Playgame() {
+function playGame(inputism, computerism) {
+    const scoreDiv = document.querySelector("#score");
+    const winner = playRound(inputism, computerism);
 
-    let humanscore = 0;
-    let computerscore = 0;
-    for (let i = 0; i<5; i++) {
-        const winner = resultism(inputism(), computerism());
-
-        if (winner === "human") {
-            humanscore += 1;
-        } else if (winner === "computer") {
-            computerscore += 1;
-        } else {
-            console.log("No one gets a point this round.");
-        }
-        console.log("The score is currently");
-        console.log("Human: " + humanscore);
-        console.log("Computer: " + computerscore);
+    if (winner === "human"){
+        humanScore = humanScore + 1;
+        roundsPlayed += 1;
     }
-
-    if (humanscore>computerscore) {
-        console.log("Human wins the game! Congratulations!");
-    }
-    else if (computerscore>humanscore) {
-        console.log("Computer wins the game! Better luck next time, human.");
+    else if (winner === "computer"){
+        computerScore = computerScore + 1;
+        roundsPlayed += 1;
     }
     else {
-        console.log("It's a draw! What a close game!");
+        roundsPlayed += 1;
     }
-    return;
+
+    scoreDiv.textContent = `Human: ${humanScore} || Computer: ${computerScore}`;
+
+    if (roundsPlayed === 5){
+        if (humanScore < computerScore){
+            scoreDiv.textContent = "Computer won overall";
+        }
+        else if (computerScore < humanScore){
+            scoreDiv.textContent = "You won overall";
+        }
+        else {
+            scoreDiv.textContent = "It's a tie overall";
+        }
+        button.forEach(btn => btn.disabled = true);
+        document.querySelector("#play-again").style.display = "block";
+    }
 }
 
-Playgame();
+function resetButton() {
+    humanScore = 0;
+    computerScore = 0;
+    roundsPlayed = 0;
+
+    document.querySelector("#score").textContent = "Scores reset! Play again!";
+    document.querySelector("#results").textContent = "";
+
+    button.forEach(btn => btn.disabled = false);
+    document.querySelector("#play-again").style.display = "none";
+}
+
+document.querySelector("#play-again").addEventListener("click", resetButton);
+
+const button = document.querySelectorAll("#rock, #paper, #scissors");
+
+button[0].addEventListener('click', () => {alert("You chose Rock!");
+    (playGame("rock", computerism()));
+});
+button[1].addEventListener('click', () => {alert("You chose Paper!");
+    (playGame("paper", computerism()));
+});
+button[2].addEventListener('click', () => {alert("You chose Scissors!");
+    (playGame("scissors", computerism()));
+});
